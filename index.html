@@ -6,14 +6,25 @@
   <title>ポイント還元シミュレーター</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --card-bg: rgba(255, 255, 255, 0.8);
+      color-scheme: light dark;
+      --bg: #eef2ff;
+      --bg-dark: #0b1020;
+      --card-bg: rgba(255, 255, 255, 0.62);
+      --card-bg-dark: rgba(17, 24, 39, 0.58);
       --text-main: #111827;
-      --text-sub: #6b7280;
+      --text-main-dark: #f3f4f6;
+      --text-sub: #4b5563;
+      --text-sub-dark: #cbd5e1;
       --accent: #2563eb;
       --accent-dark: #1d4ed8;
-      --border: rgba(17, 24, 39, 0.1);
-      --success-bg: #eef6ff;
+      --border: rgba(30, 41, 59, 0.18);
+      --border-dark: rgba(148, 163, 184, 0.28);
+      --chip: rgba(255, 255, 255, 0.75);
+      --chip-dark: rgba(30, 41, 59, 0.75);
+      --success-bg: rgba(237, 247, 255, 0.8);
+      --success-bg-dark: rgba(30, 58, 138, 0.24);
+      --footer: #64748b;
+      --footer-dark: #94a3b8;
     }
 
     * {
@@ -34,13 +45,18 @@
       padding: 24px 16px;
     }
 
+    .page {
+      width: min(780px, 100%);
+    }
+
     .app {
       width: min(680px, 100%);
       background: var(--card-bg);
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
       border: 1px solid var(--border);
       border-radius: 20px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
       padding: 24px;
     }
 
@@ -81,7 +97,7 @@
       border: 1px solid var(--border);
       font-size: 1rem;
       padding: 12px 14px;
-      background: #fff;
+      background: var(--chip);
       color: var(--text-main);
     }
 
@@ -156,6 +172,121 @@
       min-height: 1.3em;
     }
 
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .payment-btn {
+      margin-top: 0;
+      background: var(--chip);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      box-shadow: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 10px 12px;
+    }
+
+    .payment-btn.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.24);
+    }
+
+    .result-actions {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-top: 12px;
+      align-items: center;
+    }
+
+    .history {
+      margin-top: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--chip);
+      padding: 14px;
+    }
+
+    .history h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .history-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .history-item {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: grid;
+      gap: 2px;
+      font-size: 0.9rem;
+    }
+
+    .history-item small {
+      color: var(--text-sub);
+    }
+
+    .footer {
+      width: min(680px, 100%);
+      margin: 14px auto 0;
+      color: var(--footer);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        color: var(--text-main-dark);
+        background:
+          radial-gradient(circle at 15% 10%, rgba(37, 99, 235, 0.3) 0%, rgba(37, 99, 235, 0) 45%),
+          radial-gradient(circle at 85% 0%, rgba(139, 92, 246, 0.28) 0%, rgba(139, 92, 246, 0) 40%),
+          var(--bg-dark);
+      }
+
+      .app {
+        background: var(--card-bg-dark);
+        border-color: var(--border-dark);
+      }
+
+      .sub,
+      .hint,
+      .result .label,
+      .history-item small {
+        color: var(--text-sub-dark);
+      }
+
+      input,
+      select,
+      .payment-btn,
+      .history {
+        background: var(--chip-dark);
+        border-color: var(--border-dark);
+        color: var(--text-main-dark);
+      }
+
+      .result {
+        background: var(--success-bg-dark);
+        border-color: rgba(96, 165, 250, 0.36);
+      }
+
+      .footer {
+        color: var(--footer-dark);
+      }
+    }
+
     @media (max-width: 620px) {
       .app {
         padding: 18px 16px;
@@ -163,6 +294,14 @@
       }
 
       .row {
+        grid-template-columns: 1fr;
+      }
+
+      .payment-methods {
+        grid-template-columns: 1fr;
+      }
+
+      .result-actions {
         grid-template-columns: 1fr;
       }
 
@@ -175,49 +314,81 @@
   </style>
 </head>
 <body>
-  <main class="app" aria-label="ポイント還元シミュレーター">
-    <h1>ポイント還元シミュレーター</h1>
-    <p class="sub">価格と還元率を入力して、獲得ポイントと実質価格をかんたんに確認できます。</p>
+  <div class="page">
+    <main class="app" aria-label="ポイント還元シミュレーター">
+      <h1>ポイント還元シミュレーター</h1>
+      <p class="sub">支払い方法に応じた還元率を自動適用し、結果を履歴で比較できます。</p>
 
-    <section class="grid">
-      <div class="field">
-        <label for="price">商品価格（円）</label>
-        <input id="price" type="number" min="0" step="1" placeholder="例: 79800" inputmode="numeric">
-      </div>
-
-      <div class="row">
+      <section class="grid">
         <div class="field">
-          <label for="ratePreset">ポイント還元率（プリセット）</label>
-          <select id="ratePreset">
-            <option value="10">10%</option>
-            <option value="8">8%</option>
-            <option value="5" selected>5%</option>
-            <option value="3">3%</option>
-            <option value="1">1%</option>
-          </select>
+          <label for="price">商品価格（円）</label>
+          <input id="price" type="number" min="0" step="1" placeholder="例: 79800" inputmode="numeric">
         </div>
 
         <div class="field">
-          <label for="rateCustom">ポイント還元率（自由入力 %）</label>
-          <input id="rateCustom" type="number" min="0" step="0.1" placeholder="入力時はこちらを優先" inputmode="decimal">
-          <p class="hint">自由入力が空なら、プリセット値を使います。</p>
+          <label>支払い方法（還元率自動切替）</label>
+          <div class="payment-methods" role="radiogroup" aria-label="支払い方法">
+            <button type="button" class="payment-btn active" data-method="cash" data-rate="10">現金（10%）</button>
+            <button type="button" class="payment-btn" data-method="partnerCard" data-rate="8">提携クレジットカード（8%）</button>
+            <button type="button" class="payment-btn" data-method="other" data-rate="5">その他決済（5%）</button>
+          </div>
         </div>
-      </div>
 
-      <button id="calcBtn" type="button">計算する</button>
-      <p id="error" class="error" aria-live="polite"></p>
+        <div class="row">
+          <div class="field">
+            <label for="ratePreset">適用中の還元率（自動）</label>
+            <select id="ratePreset" disabled>
+              <option value="10" selected>10%</option>
+              <option value="8">8%</option>
+              <option value="5">5%</option>
+              <option value="3">3%</option>
+              <option value="1">1%</option>
+            </select>
+          </div>
 
-      <div id="result" class="result" aria-live="polite">
-        <p class="label">獲得ポイント</p>
-        <p id="pointsText" class="value">-</p>
-        <p class="label">実質価格（価格 - ポイント）</p>
-        <p id="netText" class="value">-</p>
-      </div>
-    </section>
-  </main>
+          <div class="field">
+            <label for="rateCustom">ポイント還元率（自由入力 %）</label>
+            <input id="rateCustom" type="number" min="0" step="0.1" placeholder="入力時はこちらを優先" inputmode="decimal">
+            <p class="hint">自由入力が空なら、支払い方法の自動還元率を使います。</p>
+          </div>
+        </div>
 
+        <button id="calcBtn" type="button">計算する</button>
+        <p id="error" class="error" aria-live="polite"></p>
+
+        <div id="result" class="result" aria-live="polite">
+          <p class="label">獲得ポイント</p>
+          <p id="pointsText" class="value">-</p>
+          <p class="label">実質価格（価格 - ポイント）</p>
+          <p id="netText" class="value">-</p>
+          <p class="label">支払い方法</p>
+          <p id="methodText" class="value">-</p>
+          <div class="result-actions">
+            <select id="imageType" aria-label="保存画像形式">
+              <option value="png">PNG</option>
+              <option value="jpeg">JPG</option>
+            </select>
+            <button id="saveImageBtn" type="button">結果を画像として保存</button>
+          </div>
+        </div>
+
+        <section class="history" aria-label="過去の計算結果">
+          <h2>過去の計算結果（最新5件）</h2>
+          <ul id="historyList" class="history-list">
+            <li class="history-item">まだ計算履歴はありません。</li>
+          </ul>
+        </section>
+      </section>
+    </main>
+    <footer class="footer">
+      Future Update: AIエージェント（OpenClaw）連携による他店価格の自動取得機能を開発中
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
     (function () {
+      const paymentButtons = Array.from(document.querySelectorAll(".payment-btn"));
       const priceInput = document.getElementById("price");
       const ratePreset = document.getElementById("ratePreset");
       const rateCustom = document.getElementById("rateCustom");
@@ -225,7 +396,13 @@
       const resultEl = document.getElementById("result");
       const pointsText = document.getElementById("pointsText");
       const netText = document.getElementById("netText");
+      const methodText = document.getElementById("methodText");
       const errorEl = document.getElementById("error");
+      const historyList = document.getElementById("historyList");
+      const saveImageBtn = document.getElementById("saveImageBtn");
+      const imageTypeSelect = document.getElementById("imageType");
+      const history = [];
+      let selectedMethod = paymentButtons[0];
 
       function formatYen(value) {
         return new Intl.NumberFormat("ja-JP").format(value) + " 円";
@@ -237,6 +414,44 @@
           return Number(custom);
         }
         return Number(ratePreset.value);
+      }
+
+      function setPaymentMethod(buttonEl) {
+        paymentButtons.forEach((btn) => btn.classList.remove("active"));
+        buttonEl.classList.add("active");
+        selectedMethod = buttonEl;
+        ratePreset.value = buttonEl.dataset.rate;
+        errorEl.textContent = "";
+      }
+
+      function renderHistory(current) {
+        historyList.innerHTML = "";
+        const fragment = document.createDocumentFragment();
+        const entries = history.slice(0, 5);
+
+        entries.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "history-item";
+          if (current && item.id === current.id) {
+            li.style.borderColor = "rgba(37, 99, 235, 0.6)";
+          }
+          li.innerHTML =
+            "<strong>" +
+            (index === 0 ? "現在の結果" : "過去" + index + "件前") +
+            "</strong>" +
+            "<span>価格: " + formatYen(item.price) + " / 還元率: " + item.rate + "%</span>" +
+            "<span>ポイント: " + formatYen(item.points) + " / 実質価格: " + formatYen(item.netPrice) + "</span>" +
+            "<small>支払い方法: " + item.methodLabel + " ・ " + item.time + "</small>";
+          fragment.appendChild(li);
+        });
+
+        if (entries.length === 0) {
+          const empty = document.createElement("li");
+          empty.className = "history-item";
+          empty.textContent = "まだ計算履歴はありません。";
+          fragment.appendChild(empty);
+        }
+        historyList.appendChild(fragment);
       }
 
       function calculate() {
@@ -257,18 +472,62 @@
 
         const points = Math.floor(price * (rate / 100));
         const netPrice = Math.max(price - points, 0);
+        const methodLabel = selectedMethod.textContent.split("（")[0];
+        const time = new Date().toLocaleString("ja-JP", { hour12: false });
+        const current = {
+          id: Date.now() + Math.random(),
+          price: price,
+          rate: rate,
+          points: points,
+          netPrice: netPrice,
+          methodLabel: methodLabel,
+          time: time
+        };
 
         pointsText.textContent = formatYen(points) + "（" + rate + "%）";
         netText.textContent = formatYen(netPrice);
+        methodText.textContent = methodLabel;
         resultEl.classList.add("active");
+
+        history.unshift(current);
+        if (history.length > 5) {
+          history.length = 5;
+        }
+        renderHistory(current);
       }
 
-      calcBtn.addEventListener("click", calculate);
-      ratePreset.addEventListener("change", function () {
-        if (rateCustom.value.trim() === "") {
-          errorEl.textContent = "";
+      async function saveResultImage() {
+        if (!resultEl.classList.contains("active")) {
+          errorEl.textContent = "先に計算を実行してから保存してください。";
+          return;
         }
+        errorEl.textContent = "";
+
+        try {
+          const canvas = await html2canvas(resultEl, {
+            backgroundColor: null,
+            scale: window.devicePixelRatio > 1 ? 2 : 1
+          });
+          const type = imageTypeSelect.value === "jpeg" ? "image/jpeg" : "image/png";
+          const extension = imageTypeSelect.value === "jpeg" ? "jpg" : "png";
+          const url = canvas.toDataURL(type, 0.95);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "point-result-" + Date.now() + "." + extension;
+          link.click();
+        } catch (e) {
+          errorEl.textContent = "画像保存に失敗しました。時間をおいて再試行してください。";
+        }
+      }
+
+      paymentButtons.forEach((btn) => {
+        btn.addEventListener("click", function () {
+          setPaymentMethod(btn);
+        });
       });
+
+      calcBtn.addEventListener("click", calculate);
+      saveImageBtn.addEventListener("click", saveResultImage);
       priceInput.addEventListener("keydown", function (e) {
         if (e.key === "Enter") {
           calculate();
@@ -279,6 +538,7 @@
           calculate();
         }
       });
+      renderHistory();
     })();
   </script>
 </body>
